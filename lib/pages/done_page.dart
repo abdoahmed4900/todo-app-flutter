@@ -43,9 +43,9 @@ class DonePage extends StatelessWidget {
               taskDay: tasks[index]['day'],
               isScreenArchived: false,
               archiveTask: () => tasksCubit.updateTask(
-                  id: tasks[index]['id'], status: 'archived'),
-              checkTask: () =>
-                  tasksCubit.updateTask(id: tasks[index]['id'], status: 'done'),
+                  context: context, id: tasks[index]['id'], status: 'archived'),
+              checkTask: () => tasksCubit.updateTask(
+                  id: tasks[index]['id'], status: 'done', context: context),
               context: context),
         );
       },

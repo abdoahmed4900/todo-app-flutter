@@ -43,9 +43,9 @@ class TasksPage extends StatelessWidget {
               taskTime: tasks[index]['time'],
               taskDay: tasks[index]['day'],
               archiveTask: () => tasksCubit.updateTask(
-                  id: tasks[index]['id'], status: 'archived'),
-              checkTask: () =>
-                  tasksCubit.updateTask(id: tasks[index]['id'], status: 'done'),
+                  id: tasks[index]['id'], status: 'archived', context: context),
+              checkTask: () => tasksCubit.updateTask(
+                  id: tasks[index]['id'], status: 'done', context: context),
               context: context,
               isScreenArchived: null),
         );

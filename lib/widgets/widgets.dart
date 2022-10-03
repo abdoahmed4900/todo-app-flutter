@@ -16,7 +16,7 @@ Widget taskTile(
   return Dismissible(
     key: UniqueKey(),
     onDismissed: (dir) {
-      tasksCubit.deleteTask(tasks[index]['id']);
+      tasksCubit.deleteTask(context: context, id: tasks[index]['id']);
     },
     child: Row(
       children: [
@@ -54,30 +54,32 @@ Widget taskTile(
         SizedBox(
           width: MediaQuery.of(context).size.width / 4.5,
         ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 3.5,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.archive),
-                onPressed: () {
-                  // we are in done tasks or new tasks
-                  if (isScreenArchived == null || !isScreenArchived) {
-                    archiveTask();
-                  }
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.check),
-                onPressed: () {
-                  // we are in new tasks or archived tasks
-                  if (isScreenArchived == null || isScreenArchived) {
-                    checkTask();
-                  }
-                },
-              )
-            ],
+        Expanded(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width / 3.5,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.archive),
+                  onPressed: () {
+                    // we are in done tasks or new tasks
+                    if (isScreenArchived == null || !isScreenArchived) {
+                      archiveTask();
+                    }
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.check),
+                  onPressed: () {
+                    // we are in new tasks or archived tasks
+                    if (isScreenArchived == null || isScreenArchived) {
+                      checkTask();
+                    }
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ],

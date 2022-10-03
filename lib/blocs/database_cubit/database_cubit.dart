@@ -1,9 +1,10 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_function_literals_in_foreach_calls
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:to_do_app/blocs/bottom_nav_cubit/bottom_navigation_cubit.dart';
 import 'package:to_do_app/models/task.dart';
 
 part 'database_state.dart';
@@ -34,31 +35,15 @@ class DatabaseCubit extends Cubit<DatabaseState> {
         'CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, time TEXT, day TEXT, status TEXT)',
       );
     }, onOpen: (db) {
-      getAllTasks(db);
+      getTasks(database: db, status: 'new').then((value) => newTasks = value);
+      getTasks(database: db, status: 'done').then((value) => doneTasks = value);
+      getTasks(database: db, status: 'archived')
+          .then((value) => archivedTasks = value);
     }, version: 1);
 
     emit(DatabaseCreated());
 
     return database;
-  }
-
-  Future<void> getAllTasks(Database database) async {
-    archivedTasks = [];
-
-    newTasks = [];
-
-    doneTasks = [];
-    database
-        .rawQuery('SELECT * FROM tasks')
-        .then((tasks) => tasks.forEach((element) {
-              if (element['status'] == 'new') {
-                newTasks.add(element);
-              } else if (element['status'] == 'done') {
-                doneTasks.add(element);
-              } else {
-                archivedTasks.add(element);
-              }
-            }));
   }
 
   void insertTask(
@@ -69,24 +54,52 @@ class DatabaseCubit extends Cubit<DatabaseState> {
           'INSERT INTO tasks(title,time,day,status) VALUES (?,?,?,?)',
           [task.title, task.time, task.day, 'new']);
     });
-    getAllTasks(database);
+    newTasks = await getTasks(database: database, status: 'new');
     emit(TaskInserted());
   }
 
-  void updateTask({required int id, required String status}) async {
+  void updateTask(
+      {required int id,
+      required String status,
+      required BuildContext? context}) async {
+    int index = BottomNavigationCubit.get(context).index;
+
     await database
         .rawUpdate('UPDATE tasks SET status = ? WHERE id = ?', [status, id]);
-    getAllTasks(database);
     if (status == 'archived') {
+      if (index == 0) {
+        newTasks = await getTasks(database: database, status: 'new');
+      } else {
+        doneTasks = await getTasks(database: database, status: 'done');
+      }
+      archivedTasks = await getTasks(database: database, status: 'archived');
       emit(TaskArchived());
     } else if (status == 'done') {
+      if (index == 0) {
+        newTasks = await getTasks(database: database, status: 'new');
+      } else {
+        archivedTasks = await getTasks(database: database, status: 'archived');
+      }
+      doneTasks = await getTasks(database: database, status: 'done');
       emit(TaskDone());
     }
   }
 
-  void deleteTask(int id) async {
+  Future getTasks({required Database database, required String status}) async {
+    return await database
+        .query('tasks', where: 'status = ?', whereArgs: [status]);
+  }
+
+  void deleteTask({required int id, required BuildContext context}) async {
+    int index = BottomNavigationCubit.get(context).index;
     await database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
-    getAllTasks(database);
+    if (index == 0) {
+      getTasks(database: database, status: 'new');
+    } else if (index == 1) {
+      getTasks(database: database, status: 'done');
+    } else {
+      getTasks(database: database, status: 'archived');
+    }
     emit(TaskDeleted());
   }
 }

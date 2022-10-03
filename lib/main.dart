@@ -69,6 +69,8 @@ class MyHomePage extends StatelessWidget {
       builder: (context, state) {
         final navCubit = BottomNavigationCubit.get(context);
         return Scaffold(
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniCenterFloat,
           key: scaffoldKey,
           appBar: AppBar(
             automaticallyImplyLeading: false,
