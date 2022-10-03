@@ -94,11 +94,11 @@ class DatabaseCubit extends Cubit<DatabaseState> {
     int index = BottomNavigationCubit.get(context).index;
     await database.rawDelete('DELETE FROM tasks WHERE id = ?', [id]);
     if (index == 0) {
-      getTasks(database: database, status: 'new');
+      newTasks = await getTasks(database: database, status: 'new');
     } else if (index == 1) {
-      getTasks(database: database, status: 'done');
+      doneTasks = await getTasks(database: database, status: 'done');
     } else {
-      getTasks(database: database, status: 'archived');
+      archivedTasks = await getTasks(database: database, status: 'archived');
     }
     emit(TaskDeleted());
   }
