@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +9,6 @@ import 'blocs/database_cubit/database_cubit.dart';
 import 'blocs/observer.dart';
 import 'models/task.dart';
 import 'widgets/widgets.dart';
-
-import 'globals/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +57,7 @@ class MyHomePage extends StatelessWidget {
   TextEditingController taskDateController = TextEditingController();
   TextEditingController taskTimeController = TextEditingController();
   TextEditingController taskNameController = TextEditingController();
+  TextEditingController searchBarController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -72,11 +71,14 @@ class MyHomePage extends StatelessWidget {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.miniCenterFloat,
           key: scaffoldKey,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text(pageTitles[navCubit.index]),
+          appBar: PreferredSize(
+            preferredSize: const Size(double.infinity, 56),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(navCubit.pageTitles[navCubit.index]),
+            ),
           ),
-          body: pages[navCubit.index],
+          body: navCubit.pages[navCubit.index],
           floatingActionButton: Builder(builder: (context) {
             return BlocBuilder<BottomSheetCubit, BottomSheetState>(
               builder: (context, state) {
@@ -149,7 +151,6 @@ class MyHomePage extends StatelessWidget {
                         return null;
                       },
                       controller: taskNameController,
-                      inputType: TextInputType.text,
                       label: 'Enter Task Name',
                       prefixIconData: Icons.title)),
               Padding(
@@ -161,7 +162,6 @@ class MyHomePage extends StatelessWidget {
                         }
                         return null;
                       },
-                      inputType: TextInputType.datetime,
                       controller: taskDateController,
                       prefixIconData: Icons.date_range,
                       label: 'Select Task Date',
@@ -185,7 +185,6 @@ class MyHomePage extends StatelessWidget {
                       }
                       return null;
                     },
-                    inputType: TextInputType.datetime,
                     onTap: (() {
                       showTimePicker(
                               context: context, initialTime: TimeOfDay.now())
