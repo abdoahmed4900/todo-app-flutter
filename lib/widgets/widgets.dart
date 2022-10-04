@@ -90,7 +90,7 @@ Widget taskTile(
 Widget taskFormField(
     {required String label,
     String? errorText,
-    required TextInputType inputType,
+    TextInputType? inputType,
     required IconData prefixIconData,
     ValueChanged? onChanged,
     required FormFieldValidator<String>? validator,
@@ -98,7 +98,6 @@ Widget taskFormField(
     required TextEditingController controller}) {
   return TextFormField(
     validator: validator,
-    keyboardType: inputType,
     decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
         label: Text(label),
