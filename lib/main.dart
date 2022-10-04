@@ -72,7 +72,6 @@ class MyHomePage extends StatelessWidget {
               FloatingActionButtonLocation.miniCenterFloat,
           key: scaffoldKey,
           appBar: AppBar(
-            automaticallyImplyLeading: false,
             title: Text(navCubit.pageTitles[navCubit.index]),
           ),
           body: navCubit.pages[navCubit.index],
